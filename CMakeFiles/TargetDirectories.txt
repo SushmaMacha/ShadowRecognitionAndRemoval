@@ -1,0 +1,3 @@
+/home/sushma/295A/CMakeFiles/rebuild_cache.dir
+/home/sushma/295A/CMakeFiles/main.dir
+/home/sushma/295A/CMakeFiles/edit_cache.dir

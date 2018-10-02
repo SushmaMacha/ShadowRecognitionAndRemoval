@@ -1,0 +1,56 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <thread>
+#include <mutex>
+#include "opencv2/opencv_modules.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc.hpp"
+
+using namespace std; 
+using namespace cv;
+
+void camera1(VideoCapture &cap1, string windowName);
+
+void camera1(VideoCapture &cap1, string windowName)
+{
+	mutex mu;
+	if(!cap1.isOpened())
+	{
+		cout <<"could not open"<<endl;
+	}
+	
+	while(1)
+	{
+		Mat frame1,blurFrm1,src,dest;
+		cap1 >> frame1;
+		if(frame1.empty())
+		break;
+		GaussianBlur(frame1,blurFrm1,Size(7,7),0);
+		cvtColor(blurFrm1,src,CV_BGR2GRAY);
+		equalizeHist(src,dest);
+		imshow(windowName,dest);
+		char c1 = (char)waitKey(20);
+		//close when 'ESC' is pressed
+		if(c1 == 27)
+		break;
+	}
+}
+
+
+int main(int argc, char **argv)
+{
+	string img_path1 = "IMG_3153.MOV";
+	string img_path2 = "IMG_3322.MOV";
+	VideoCapture cap1(img_path1);
+	VideoCapture cap2(img_path2);
+	void (*cam) (VideoCapture &cap1, string windowName);
+	cam = camera1;
+	namedWindow("cam1", CV_WINDOW_AUTOSIZE);
+	namedWindow("cam2", CV_WINDOW_AUTOSIZE);
+	thread t1 (cam,std::ref(cap1),"cam1");
+	thread t2 (cam,std::ref(cap2),"cam2");
+	t1.join();
+	t2.join();
+	return 0;
+}
