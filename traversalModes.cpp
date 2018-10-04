@@ -18,6 +18,7 @@ class traversalModes
 	int sz=0,maxLevel=0;
 	//array storing each contour level
 	int *Clevel;
+	Stack *s;
 	
 	traversalModes(vector <vector<Point>> &C,vector <Vec4i> &H,int n)
 	{
@@ -26,6 +27,7 @@ class traversalModes
 		Clevel = (int *)malloc(n*sizeof(int));
 		sz = n;
 		memset(Clevel,-1,sz*4);
+		s = new Stack(sz);
 	}
 	
 	void contourLevels(void)
@@ -127,6 +129,111 @@ class traversalModes
 			
 		}
 		
+	}
+	//Depth First Search
+	void DFS(void)
+	{
+		//variables for drawContours
+		Mat canvas(650, 1160, CV_8UC3,Scalar(0,0,0));
+		int i = 0, j = 0,temp=0;
+		while(1)
+		{
+			if(hierarchy[i][0] != -1)
+					s->push(hierarchy[i][0]);
+			//check for a child contour
+			//if a child contour exists
+			if(hierarchy[i][2] != -1)
+			{
+				//point to the child contour
+				i = hierarchy[i][2];
+				//Store the next contour in stack 
+				if(hierarchy[i][0] != -1)
+					s->push(hierarchy[i][0]);
+				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("contours", WINDOW_AUTOSIZE);
+				imshow("contours",canvas);
+				while(1)
+				{
+					char k = waitKey(33);
+					if(k == 27)
+						break;
+				}
+				continue;
+			}
+			//if not check for a sibling contour
+			if(hierarchy[i][0] != -1)
+			{
+				i = hierarchy[i][0];
+				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("contours", WINDOW_AUTOSIZE);
+				imshow("contours",canvas);
+				while(1)
+				{
+					char k = waitKey(33);
+					if(k == 27)
+						break;
+				}
+				//continue
+				continue;
+			}
+			//if there is parent contour
+			else if(!s->empty)
+			{
+				//point to the sibling contour
+				i = s->pop();	
+				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("contours", WINDOW_AUTOSIZE);
+				imshow("contours",canvas);
+				while(1)
+				{
+					char k = waitKey(33);
+					if(k == 27)
+						break;
+				}
+				//continue
+				continue;
+				//else
+					//break;
+			}
+			//if no child, no sibling and no parent
+			else
+				break;
+		}
+		cout << " Max Level : " << maxLevel << endl;
+		
+	}
+	void childToParentDFS(void)
+	{
+		//variables for drawContours
+		Mat canvas(650, 1160, CV_8UC3,Scalar(0,0,0));	
+		int temp = 0,level = 0,i=0,j=0;
+	}
+	void childToParentBFS(void)
+	{
+		//variables for drawContours
+		Mat canvas(650, 1160, CV_8UC3,Scalar(0,0,0));	
+		int temp = 0,level = maxLevel,i=0,j=0;
+		while(level >= 0)
+		{
+			for(int i = 0; i < sz;i++)
+			{
+				if(Clevel[i] == level)
+				{
+					drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+					namedWindow("contours", WINDOW_AUTOSIZE);
+					imshow("contours",canvas);
+					while(1)
+					{
+						char k = waitKey(33);
+						if(k == 27)
+							break;
+					}
+				}
+					
+			}
+			level--;
+			
+		}
 	}
 	
 };

@@ -55,6 +55,10 @@ TM.contourLevels();
 
 TM.validateVisits();
 
-TM.BFS();
+//TM.childToParentBFS();
+
+//TM.BFS();
+
+TM.DFS();
 
 }
