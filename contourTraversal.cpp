@@ -5,19 +5,19 @@
 #include "opencv2/opencv_modules.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc.hpp"
-#include "stackContours.cpp"
+#include "traversalModes.cpp"
 
 using namespace cv;
 using namespace std;
 
 int main()
 {
-Mat image = imread("contour.jpg", cv::IMREAD_GRAYSCALE);
+Mat image = imread("contour2.jpg", cv::IMREAD_GRAYSCALE);
 
 Mat img;
 
 //eliminate noise - select the kernel based on the noise
-GaussianBlur(image,img,Size(5,5),0,0);
+GaussianBlur(image,img,Size(11,11),0,0);
 
 Mat detected_edges;
 
@@ -39,11 +39,22 @@ Canny(img,detected_edges,lower_threshold,lower_threshold*3,kernel_size);
 
 findContours(detected_edges,contours,hierarchy,CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
-//instantiate a stack with the number of contours
-Stack s(contours.size());
+//print hierarchies - for debugging purposes
+for (int i = 0;i < hierarchy.size();i++)
+{
+	cout << hierarchy[i][0] << " " << hierarchy[i][1] << " " << hierarchy[i][2] << " " <<  hierarchy[i][3] << endl;
+}
 
-// Draw contours
-int i = 0,j = 0;
+int sz = contours.size();
 
+//cout << "size : " << sz << endl;
+//instantiate traversalModes to traverse the contour list
+traversalModes TM(contours,hierarchy,sz);
+
+TM.contourLevels();
+
+TM.validateVisits();
+
+TM.BFS();
 
 }
