@@ -17,7 +17,7 @@ Mat image = imread("contour2.jpg", cv::IMREAD_GRAYSCALE);
 Mat img;
 
 //eliminate noise - select the kernel based on the noise
-GaussianBlur(image,img,Size(11,11),0,0);
+GaussianBlur(image,img,Size(7,7),0,0);
 
 Mat detected_edges;
 
@@ -55,10 +55,12 @@ TM.contourLevels();
 
 TM.validateVisits();
 
-//TM.childToParentBFS();
-
-//TM.BFS();
+TM.BFS();
 
 TM.DFS();
+
+TM.childToParentBFS();
+
+TM.childToParentDFS();
 
 }

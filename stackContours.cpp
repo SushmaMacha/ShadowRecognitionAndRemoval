@@ -15,6 +15,9 @@ public:
 	bool full;
 	int *hierarchy = nullptr;
 
+Stack()
+{;
+}
 
 Stack(int n)
 {
