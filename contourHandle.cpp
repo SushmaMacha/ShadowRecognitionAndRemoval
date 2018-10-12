@@ -1,3 +1,9 @@
+/*
+Authour - Sushma Macha
+Finds the contours of a given picture and creates instantiations of functions in contourLeafs
+to get the level and children information of the contours in the given picture
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>

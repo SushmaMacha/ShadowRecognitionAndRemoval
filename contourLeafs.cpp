@@ -1,3 +1,11 @@
+/*
+Authour - Sushma Macha
+Function Implementations 
+findLevel - gives information of the level of a given contour in a contour hierarchy
+findChildren - returns the number of children in a given contour sub tree 
+formed with the root as the parameter contour id passed to the function
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
