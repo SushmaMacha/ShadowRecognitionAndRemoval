@@ -35,7 +35,6 @@ class traversalModes
 		int i = 0, j = 0,level = 0;
 		//by default in TREE mode contour 0 is of level 0
 		Clevel[0] = 0;
-		cout << "Contour : " << i << " Level : " << level << endl;
 		while(1)
 		{
 			//check for a child contour
@@ -49,7 +48,6 @@ class traversalModes
 					maxLevel = level;
 				//point to the child contour
 				i = hierarchy[i][2];
-				cout << "Contour : " << i << " Level : " << level << endl;
 				//continue
 				continue;
 			}
@@ -60,7 +58,6 @@ class traversalModes
 				Clevel[hierarchy[i][0]] = level;
 				//point to the sibling contour
 				i = hierarchy[i][0];
-				cout << "Contour : " << i << " Level : " << level << endl;
 				//continue
 				continue;
 			}
@@ -77,7 +74,6 @@ class traversalModes
 						Clevel[hierarchy[i][0]] = level;
 						//point to sibling contour
 						i = hierarchy[i][0];
-						cout << "Contour : " << i << " Level : " << level << endl;
 						//continue
 						break;
 					}
@@ -246,21 +242,24 @@ class traversalModes
 				{
 					//point to parent
 					i = hierarchy[i][3];
-					//point to next
-					cout << "parent" << i << endl;
-					//if parent has next
-					if(hierarchy[i][0] != -1)
-						break;
+					cout << "parent " << i << endl;
+					//draw the parent contour
 					drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
 					namedWindow("IDFS", WINDOW_AUTOSIZE);
 					imshow("IDFS",canvas);
-					waitKey(100);
+					while(1)
+					{
+						char k = waitKey(33);
+						if(k == 27)
+							break;
+					}
+					//if parent has next
+					if(hierarchy[i][0] != -1)
+						break;
 					//if the parent has previous
 					if(hierarchy[i][1] != -1)
 					{
 						i = hierarchy[i][1];
-						//point to next
-						cout << "previous of parent" << i << endl;
 						// print previous
 						drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
 						namedWindow("IDFS", WINDOW_AUTOSIZE);
@@ -271,6 +270,8 @@ class traversalModes
 							if(k == 27)
 								break;
 						}
+						//point to next
+						cout << "previous of parent " << i << endl;
 						continue;
 					}
 				}
@@ -278,7 +279,7 @@ class traversalModes
 				{
 					i = hierarchy[i][0];
 					//point to next
-					cout << "next of parent" << i << endl;
+					cout << "next of parent " << i << endl;
 					continue;
 				}
 				else
@@ -288,6 +289,16 @@ class traversalModes
 			if(hierarchy[i][0] != -1)
 			{
 				i = hierarchy[i][0];
+				cout << "next " << i << endl;
+				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("IDFS", WINDOW_AUTOSIZE);
+				imshow("IDFS",canvas);
+				while(1)
+				{
+					char k = waitKey(33);
+					if(k == 27)
+						break;
+				}
 				//continue
 				continue;
 			}			
