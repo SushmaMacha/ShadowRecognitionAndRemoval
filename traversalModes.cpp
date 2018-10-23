@@ -19,6 +19,7 @@ class traversalModes
 	//array storing each contour level
 	int *Clevel;
 	Stack *s;
+	bool parent;
 	
 	traversalModes(vector <vector<Point>> &C,vector <Vec4i> &H,int n)
 	{
@@ -28,6 +29,7 @@ class traversalModes
 		sz = n;
 		memset(Clevel,-1,sz*4);
 		s = new Stack(sz);
+		parent = false;
 	}
 	
 	void contourLevels(void)
@@ -221,7 +223,7 @@ class traversalModes
 				{
 					//point to next
 					i = hierarchy[i][0];
-					continue;
+					cout << "next of child" << i << endl;
 				}
 				//print the child
 				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
@@ -238,12 +240,17 @@ class traversalModes
 			//if there is parent contour
 			else if(hierarchy[i][3] != -1)
 			{
+				//draw the child contour
+				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("IDFS", WINDOW_AUTOSIZE);
+				imshow("IDFS",canvas);
 				while(hierarchy[i][3] != -1)
 				{
+					
 					//point to parent
 					i = hierarchy[i][3];
-					cout << "parent " << i << endl;
-					//draw the parent contour
+					cout << "parent " << i << endl;\
+					//draw parent contour
 					drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
 					namedWindow("IDFS", WINDOW_AUTOSIZE);
 					imshow("IDFS",canvas);
@@ -274,22 +281,65 @@ class traversalModes
 						cout << "previous of parent " << i << endl;
 						continue;
 					}
+					
 				}
 				if(hierarchy[i][0] != -1)
 				{
-					i = hierarchy[i][0];
 					//point to next
+					i = hierarchy[i][0];
 					cout << "next of parent " << i << endl;
+					//if no child
+					if(hierarchy[i][2] == -1)
+					{
+						drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+						namedWindow("IDFS", WINDOW_AUTOSIZE);
+						imshow("IDFS",canvas);
+						while(1)
+						{
+							char k = waitKey(33);
+							if(k == 27)
+								break;
+						}
+					}
+					
 					continue;
 				}
 				else
+				{
+					//draw contour
+					drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+					namedWindow("IDFS", WINDOW_AUTOSIZE);
+					imshow("IDFS",canvas);
+					while(1)
+					{
+						char k = waitKey(33);
+						if(k == 27)
+							break;
+					}
 					break;
+				}
 			}
 			//if not check for a sibling contour
 			if(hierarchy[i][0] != -1)
 			{
 				i = hierarchy[i][0];
 				cout << "next " << i << endl;
+				/*drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("IDFS", WINDOW_AUTOSIZE);
+				imshow("IDFS",canvas);
+				while(1)
+				{
+					char k = waitKey(33);
+					if(k == 27)
+						break;
+				}
+				//continue*/
+				continue;
+			}			
+			//if no child, no sibling and no parent
+			else
+			{
+				//draw the contour
 				drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
 				namedWindow("IDFS", WINDOW_AUTOSIZE);
 				imshow("IDFS",canvas);
@@ -299,12 +349,8 @@ class traversalModes
 					if(k == 27)
 						break;
 				}
-				//continue
-				continue;
-			}			
-			//if no child, no sibling and no parent
-			else
 				break;
+			}
 		}
 	}
 	
