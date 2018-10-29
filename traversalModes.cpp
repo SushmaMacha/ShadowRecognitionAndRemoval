@@ -10,6 +10,8 @@
 using namespace cv;
 using namespace std;
 
+#define debug 1
+
 class traversalModes
 {
 	public:	
@@ -249,7 +251,7 @@ class traversalModes
 					
 					//point to parent
 					i = hierarchy[i][3];
-					cout << "parent " << i << endl;\
+					cout << "parent " << i << endl;
 					//draw parent contour
 					drawContours(canvas,contours,i,Scalar(255),2,8,hierarchy,0,Point());
 					namedWindow("IDFS", WINDOW_AUTOSIZE);
@@ -352,6 +354,114 @@ class traversalModes
 				break;
 			}
 		}
+	}
+	
+	void IDFS(void)
+	{
+		//save the first contour as parent
+		//loop through next and push in a stack
+		//while there is a child
+		//point to the parent contour
+		//check for a child - point to the child
+		//goto step 2
+		//if no child, print parent till it reaches parent
+		//pop - save parent
+		//goto step 2
+		
+		
+		Stack s(contours.size());
+		int i = 0, parent = 0, j= 0,current = 0,iter=0;
+		Mat canvas(650, 1160, CV_8UC3,Scalar(0,0,0));
+		while(1)
+		{
+			//loop through next and push in a stack
+			j = current;
+			#if debug 
+				cout << "Iteration # : " << ++iter << endl;
+			#endif
+			//push all the contours in same level into stack
+			while(hierarchy[current][0] != -1)
+			{
+				#if debug 
+					cout << "Stack Push : " << current << endl;
+				#endif
+				s.push(hierarchy[current][0]);
+				current = hierarchy[current][0];
+			}
+			current = j;
+			//If the current contour has children, go to the deepest one
+			if(hierarchy[current][2] != -1)
+				current = hierarchy[current][2];
+			//else draw contours from child to parent or just parent
+			else
+			{
+				//draw contours from child to parent
+				while(current != parent && hierarchy[current][3] != -1)
+				{
+					#if debug 
+						cout << "Child : " << current << endl;
+					#endif
+					drawContours(canvas,contours,current,Scalar(255),2,8,hierarchy,0,Point());
+					namedWindow("IDFS", WINDOW_AUTOSIZE);
+					imshow("IDFS",canvas);
+					while(1)
+					{
+						char k = waitKey(33);
+						if(k == 27)
+							break;
+					}
+					current = hierarchy[current][3];
+				}
+				//draw parent
+				#if debug 
+					cout << "Parent : " << current << endl;
+				#endif
+				drawContours(canvas,contours,current,Scalar(255),2,8,hierarchy,0,Point());
+				namedWindow("IDFS", WINDOW_AUTOSIZE);
+				imshow("IDFS",canvas);
+				while(1)
+				{
+					char k = waitKey(33);
+					if(k == 27)
+						break;
+				}
+			
+				parent = s.pop();
+				#if debug 
+					cout << "Stack Pop : " << parent << endl;
+				#endif
+				if(hierarchy[parent][2] != -1)
+					current = hierarchy[parent][2];
+				else
+				{
+					while((hierarchy[parent][2] == -1 && !s.empty)||(parent == 0))
+					{
+						#if debug
+							cout << "Next : " << parent << endl;
+						#endif
+						drawContours(canvas,contours,parent,Scalar(255),2,8,hierarchy,0,Point());
+						namedWindow("IDFS", WINDOW_AUTOSIZE);
+						imshow("IDFS",canvas);
+						while(1)
+						{
+							char k = waitKey(33);
+							if(k == 27)
+								break;
+						}
+						parent = s.pop();
+					}
+					if(hierarchy[parent][2] != -1)
+						current = hierarchy[parent][2];
+				}	
+					
+			}
+			
+			//break condition
+			if(s.empty && hierarchy[parent][2] == -1)
+				break;		
+		}
+		
+		
 	}
 	
 	//Breadth first search from the inner most level to outer most level
